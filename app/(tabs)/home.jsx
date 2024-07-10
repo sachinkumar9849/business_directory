@@ -4,7 +4,7 @@ import Header from '../../components/Home/Header'
 const Home = () => {
   return (
     <View>
-      <Text>Home</Text>
+     
       {/* Header  */}
       <Header/>
       {/* Slider  */}

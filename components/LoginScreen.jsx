@@ -2,22 +2,22 @@ import React from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import * as WebBrowser from "expo-web-browser";
 import { useOAuth } from "@clerk/clerk-expo";
-import { useWarmUpBrowser } from '../hooks/useWarmUpBrowser';
-import { useNavigation } from '@react-navigation/native';
+import { useWarmUpBrowser } from './../hooks/useWarmUpBrowser';
+
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
   useWarmUpBrowser();
-  const navigation = useNavigation();
+
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
   const onPress = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await startOAuthFlow();
+      const { createdSessionId, signIn, signUp, setActive } = await startOAuthFlow();
       if (createdSessionId) {
         setActive({ session: createdSessionId });
-        navigation.navigate('home');  // Navigate to home page after setting session
+       
       } else {
         // Handle additional steps like MFA
       }

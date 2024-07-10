@@ -2,19 +2,27 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { Stack, useRouter } from "expo-router";
 import React, { Profiler } from 'react';
 import { Text } from "react-native";
-import LoginScreen from "./../components/LoginScreen";
-import * as SecureStore from 'expo-secure-store';
+import LoginScreen from "../components/LoginScreen"
+import * as SecureStore from "expo-secure-store";
+
 
 const tokenCache = {
   async getToken(key) {
     try {
-      return SecureStore.getItemAsync(key);
+      const item = await SecureStore.getItemAsync(key);
+      if (item) {
+        console.log(`${key} was used 🔐 \n`);
+      } else {
+        console.log("No values stored under key: " + key);
+      }
+      return item;
     } catch (error) {
+      console.error("SecureStore get item error: ", error);
+      await SecureStore.deleteItemAsync(key);
       return null;
-      
     }
   },
-  async saveToken(key ,value) {
+  async saveToken(key, value) {
     try {
       return SecureStore.setItemAsync(key, value);
     } catch (err) {
@@ -23,44 +31,23 @@ const tokenCache = {
   },
 };
 
-const linking ={
-  prefixes: ['yourapp://', 'https://yourapp.com'],
-config:{
-  screen:{
-    "(tabs)":{
-      screen:{
-        home:"home",
-        explore:"explore",
-        profile:"profile",
-      }
-    }
-  }
-}
-}
+
 
 export default function RootLayout() {
 
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-      <Stack screenOptions={{headerShown:false}} linking={linking}>
-        <SignedIn>
-        <Stack.Screen name="(tabs)" />
-        </SignedIn>
-        <SignedOut>
-          <Stack.Screen name="login" component={LoginScreen} />
-        </SignedOut>
-
-
-      </Stack>
-      {/* <SignedIn>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </SignedIn>
-      <SignedOut>
-        <LoginScreen />
-      </SignedOut> */}
+     <SignedIn>
+     <Stack screenOptions={{headerShown:false}}>
+        <Stack.Screen name="(tabs)"/>
+     </Stack>
+     </SignedIn>
+     <SignedOut>
+      <LoginScreen/>
+    
+     </SignedOut>
+   
     </ClerkProvider>
   );
 }

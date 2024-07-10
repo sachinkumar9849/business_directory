@@ -8,5 +8,5 @@ export const useWarmUpBrowser = () => {
       return () => {
         void WebBrowser.coolDownAsync();
       };
-    }, []);
+    }, []); 
 };
